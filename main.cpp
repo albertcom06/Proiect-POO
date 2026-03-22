@@ -1,3 +1,12 @@
+//PROIECT : Sistem de gestiune pariuri sportive
+//DESCRIERE PROBLEMA: Programul simuleaza o platforma de pariuri unde utilizatorii pot gestiona competitii,
+//meciuri si pot simula plasarea biletelor(de un singur meci sau mai multe).
+//DATELE DE INTRARE:
+//Numele competitiei si Tara/Continent(daca este o cupa intercontinentala)
+//Echipele gazda si echipele oaspete(siruri de caractere)
+//Cotele pentru cele trei rezultate posibile
+//Miza pariului si optiunea aleasa de parior
+//ID si obiectul pariu
 #include <iostream>
 #include <cstring>
 class Competitie  {
@@ -9,16 +18,20 @@ class Competitie  {
 
 
   // Constructor
-  Competitie( const char* Nume, const char* Tara)
+    //Il folosim pentru a initializa numele si tara competitiei
+      Competitie( const char* Nume, const char* Tara)
   {
       this->Nume = new char[strlen(Nume)+1];
       std::strcpy(this->Nume,Nume);
 
       this->Tara = new char[strlen(Tara)+1];
       std::strcpy(this->Tara,Tara);
+
+          std::cout<<"Constructor Competitie"<<std::endl;
   }
 
     // Constructor de copiere
+    //Il utilizam pentru a realiza o copie pentru fiecare sir de caracter in parte.
     Competitie(const Competitie& nou)
     {
         this->Nume = new char[strlen(nou.Nume) + 1];
@@ -31,6 +44,7 @@ class Competitie  {
 
 
     //Getter
+    //Il utilizam pentru a permite accesul la valorile campului Nume
     char* getNume() const
     {
         char *numeReturnat = new char[strlen(Nume) + 1];
@@ -39,6 +53,8 @@ class Competitie  {
     }
 
     //Setter
+    //Il utilizam pentru a putea modifica valoarea campului Nume prin
+    //eliberearea spatiului vechi si alocarea unui spatiu nou pentru acualizarea tarii
     void setNume(const char* Nume)
     {
         delete[] this->Nume;
@@ -47,6 +63,7 @@ class Competitie  {
     }
 
     //Getter
+    //Il utilizam pentru a permite accesul la valorile campului Tara
     char* getTara() const
     {
         char *taraReturnat = new char[strlen(Tara) + 1];
@@ -55,6 +72,8 @@ class Competitie  {
     }
 
     //Setter
+    //Il utilizam pentru a putea modifica valoarea campului Tara prin
+    //eliberearea spatiului vechi si alocarea unui spatiu nou pentru acualizarea tarii
     void setTara(const char* Tara)
     {
         delete[] this->Tara;
@@ -62,7 +81,8 @@ class Competitie  {
         std::strcpy(this->Tara, Tara);
     }
 
-
+   //Operatorul de atribuire
+    //Gestioneaza copierea corecta a datelor intre obiectele existente
     Competitie& operator=(const Competitie& sursa)
     {
         if(this != &sursa)
@@ -79,13 +99,14 @@ class Competitie  {
         return *this;
     }
 
-
+    //Afiseaza competitia si tara intr-un mod mai lizibil
     friend std::ostream& operator<<(std::ostream& os, const Competitie& c) {
      os <<"COMPETITIE: " <<c.Nume<< " (TARA: "<<c.Tara <<")";
      return os;
     }
 
    //Destructor
+    //Elibereaza memoria ocupata de pointerii Nume si Tara
   ~Competitie()
     {
         std::cout << "~Competitie() " << Nume <<" "<< Tara <<std::endl;
@@ -106,8 +127,11 @@ class Meciuri{
       double cotax;
       double cota2;
 
+
   public:
 
+    //Constructor
+    //Utilizat pentru initializarea echipelor si a celor trei cote pe care le putem alege
       Meciuri(const char* EchipaGazda, const char* EchipaOaspete, double cota1, double cotax, double cota2)
       {
           std::cout <<"Constructor Meciuri"<<" "<<std::endl;
@@ -124,10 +148,12 @@ class Meciuri{
           this->cotax=cotax;
           this->cota2=cota2;
 
+
       }
 
 
       //Constructor de copiere
+    //Il utilizam pentru a copia datele unui meci intr-un obiect nou
       Meciuri(const Meciuri &nou)
       {
           this->EchipaGazda=new char[strlen(nou.EchipaGazda)+1];
@@ -139,10 +165,12 @@ class Meciuri{
           this->cota1=nou.cota1;
           this->cotax=nou.cotax;
           this->cota2=nou.cota2;
+
       }
 
 
       //Getter
+    //Toti getteri ofera acces la datele meciului
       char* getEchipaGazda() const
       {
         char *EGReturnat = new char[strlen(EchipaGazda) + 1];
@@ -158,12 +186,14 @@ class Meciuri{
         return EOReturnat;
       }
 
+      //Getteri
       double getCota1() const {return this->cota1;}
       double getCotax() const {return this->cotax;}
       double getCota2() const {return this->cota2;}
 
 
-
+    //Operatorul de atribuire
+    //Permite reatribuirea datelor unui meci
       Meciuri& operator=(const Meciuri& sursa)
     {
         if(this != &sursa)
@@ -184,6 +214,8 @@ class Meciuri{
         return *this;
     }
 
+    //Calculeaza cota totala a unui bilet in care sunt plasate mai multe meciuri prin inmultirea cotelor
+    //selectate
     static double calcMeciuriMultiple(Meciuri* meciuri, int nrMeciuri,int* optiuni)
     {
         if(nrMeciuri<0) return 0;
@@ -213,7 +245,7 @@ class Meciuri{
         return cotaFinala;
     }
 
-
+    //O functie care actualizeaza toate cotele unui meci
     void ActualizeazaCote(double multiplicator){
 
       if(multiplicator>0)
@@ -228,7 +260,7 @@ class Meciuri{
 
     }
 
-
+      //Afiseaza echipele si cotele intr-un mod mai lizibil
       friend std::ostream& operator<<(std::ostream& os, const Meciuri& m)
       {
           os << m.EchipaGazda<<" vs "<<m.EchipaOaspete<<" [Cote: "<<m.cota1<<" | "<<m.cotax<<" | "<<m.cota2<<"]";
@@ -238,6 +270,7 @@ class Meciuri{
 
 
       //Destructor
+    //Curata memoria alocata pentru cele 2 echipe
      ~Meciuri()
       {
         std::cout << "Destructor ~Meciuri() " << EchipaGazda <<" "<< EchipaOaspete <<std::endl;
@@ -255,13 +288,23 @@ class Pariuri{
     int optiune;
     const Meciuri* meciPariat;
 
+    double valideazaMiza(double m) {
+        if (m<0) return 1.0;
+        return m;
+
+    }
+
  public:
 
+
+    Pariuri(){}
+    //Constructor
+    //Leaga o miza si o optiune de pariu de un meci existent
     Pariuri(const double miza, const int optiune, const Meciuri* meciPariat)
     {
         std::cout<<"Constructor Pariuri"<<std::endl;
 
-          this->miza=miza;
+          this->miza=valideazaMiza(miza);
 
           this->optiune=optiune;
 
@@ -270,6 +313,7 @@ class Pariuri{
     }
 
     //Constructor de copiere
+    //Copiam miza si referinta catre meciul pariat
       Pariuri(const Pariuri &nou)
       {
           this->miza=nou.miza;
@@ -280,6 +324,7 @@ class Pariuri{
 
       }
 
+    //Inmulteste miza cu cota corespunzatoare optiunii alese
       double calculCastig()
       {
           if(optiune==1)
@@ -294,6 +339,7 @@ class Pariuri{
             return 0;
       }
 
+    //Inmulteste miza cu cota corespunzatoare optiunii alese adaugand un bonus procentual suplimentar
       double calculCastig(double procentBonus)
       {
           double castigNormal=this->calculCastig();
@@ -301,7 +347,7 @@ class Pariuri{
 
       }
 
-
+      //Afisam detaliile pariului
       friend std::ostream& operator<<(std::ostream& os, const Pariuri& p)
       {
           os<<"Pariu pe meciul: "<<*(p.meciPariat) <<" | Miza: "<<p.miza<<" RON ";
@@ -309,6 +355,7 @@ class Pariuri{
       }
 
       //Destructor
+    //Afisam distrugerea obiectului
      ~Pariuri()
       {
         std::cout << "~Pariuri() "<<std::endl;
@@ -316,14 +363,39 @@ class Pariuri{
 
 };
 
+class Bilet {
 
+    int idBilet;
+    Pariuri pariu;
+
+public:
+
+    //Constructor
+    Bilet( int idBilet, Pariuri pariu)
+    {
+        this->idBilet = idBilet;
+        this->pariu = pariu;
+
+        std::cout<<"Constructor Bilet"<<std::endl;
+    }
+
+    // Operator << care apeleaza operatorul << al clasei Pariuri
+    friend std::ostream& operator<<(std::ostream& os, const Bilet& b) {
+        os << "Bilet ID: " << b.idBilet << " | " << b.pariu;
+        return os;
+    }
+
+    //Destructor
+    ~Bilet() {
+        std::cout << "~Bilet() distrus" << std::endl;
+    }
+};
 
 
 int main()
 {
 
    Competitie comp1("Champions League","Europa");
-   std::cout<<comp1<<std::endl;
 
    Meciuri bilet[3]={
       Meciuri{"Real Madrid","Manchester City",2.10,2.22,2.00},
@@ -331,21 +403,31 @@ int main()
       Meciuri{"FCSB","Dinamo Bucuresti",1.50,3.00,2.50}
       };
 
+    std::cout<<comp1<<std::endl;
+
+
     int alegeri[3]={1,2,3};
 
     double cotaBilet= Meciuri::calcMeciuriMultiple(bilet,3,alegeri);
-    std::cout<<"Cota bilet acumulator: "<<cotaBilet<<std::endl;
-
     double SumaBiletMultiplu=25.00;
 
+    std::cout<<"Cota bilet acumulator: "<<cotaBilet<<std::endl;
     std::cout<<"Castig potential bilet acumulat: "<<SumaBiletMultiplu*cotaBilet<<std::endl;
 
-    Pariuri p1(100.0, 1, &bilet[0]);
+    Pariuri p1(100, 1, &bilet[0]);
+    Bilet b1(10,p1);
+
+    std::cout<<"Detalii bilet: "<<std::endl;
+    std::cout<<b1<<std::endl;
     std::cout<<p1<<" | Castig standard: "<<p1.calculCastig()<<" lei"<<std::endl;
     std::cout<<p1<<" | Castig bonus: "<<p1.calculCastig(15.0)<<" lei"<<std::endl;
 
     bilet[0].ActualizeazaCote(1.1);
     std::cout<<"Cota actualizata: "<<bilet[0]<<std::endl;
+
+    Competitie comp2 = comp1;
+    comp2.setNume("Europa League");
+    std::cout << "Comp2 modificata: " << comp2 << std::endl;
 
     return 0;
 }
