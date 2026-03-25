@@ -9,6 +9,7 @@
 //ID si obiectul pariu
 #include <iostream>
 #include <cstring>
+#include <vector>
 class Competitie  {
    private:
       char* Nume;
@@ -366,22 +367,47 @@ class Pariuri{
 class Bilet {
 
     int idBilet;
-    Pariuri pariu;
+    std::vector<Pariuri> pariuri;
 
 public:
 
     //Constructor
-    Bilet( int idBilet, Pariuri pariu)
+    Bilet( int idBilet)
     {
         this->idBilet = idBilet;
-        this->pariu = pariu;
 
-        std::cout<<"Constructor Bilet"<<std::endl;
+        std::cout<<"Constructor idBilet"<<std::endl;
     }
 
+    //Functie pentru a adauga un pariu pe bilet
+    void adaugaPariu(const Pariuri& p) {
+        pariuri.push_back(p);
+    }
+
+    //Functie pentru a calcula castigul total al biletului
+    double CalculCastigTotal()
+    {
+    double total=0.0;
+        for (int i=0;i < pariuri.size();i++) {
+            total+=pariuri[i].calculCastig();
+        }
+        return total;
+
+    }
+
+    //Supraincarcarea operatorului +=
+    Bilet& operator+=(const Pariuri& p) {
+        this->pariuri.push_back(p);
+        return *this;
+    }
     // Operator << care apeleaza operatorul << al clasei Pariuri
     friend std::ostream& operator<<(std::ostream& os, const Bilet& b) {
-        os << "Bilet ID: " << b.idBilet << " | " << b.pariu;
+        os << "Bilet ID: " << b.idBilet<<std::endl;
+        for (int i=0; i<b.pariuri.size();i++) {
+            const Pariuri& p=b.pariuri[i];
+            os << "-"<<p<<" "<<std::endl;
+        }
+
         return os;
     }
 
@@ -414,13 +440,37 @@ int main()
     std::cout<<"Cota bilet acumulator: "<<cotaBilet<<std::endl;
     std::cout<<"Castig potential bilet acumulat: "<<SumaBiletMultiplu*cotaBilet<<std::endl;
 
-    Pariuri p1(100, 1, &bilet[0]);
-    Bilet b1(10,p1);
+
+    Bilet b1(10);
+    Pariuri p1(25, 1, &bilet[0]);
+    Pariuri p2(30, 2, &bilet[1]);
+    Pariuri p3(40, 3, &bilet[2]);
+    b1+=p1;
+    b1+=p2;
+    b1+=p3;
+    std::cout<<b1<<std::endl;
+    std::cout<<"Calcul castig potential bilet1:"<<b1.CalculCastigTotal()<<" "<<" RON "<<std::endl;
+
+
+    Bilet b2(12);
+    Pariuri p4(10, 3, &bilet[0]);
+    Pariuri p5(15, 1, &bilet[1]);
+    b2+=p4;
+    b2+=p5;
+    std::cout<<b2<<std::endl;
+    std::cout<<"Calcul castig potential bilet2:"<<b2.CalculCastigTotal()<<" "<<" RON "<<std::endl;
+
+    Bilet b3=b2;
+    std::cout<<"b3: "<<b3<<"  "<<"Calcul castig b3: "<<b3.CalculCastigTotal()<<" "<<" RON "<<std::endl;
+    bilet[0].ActualizeazaCote(2.1);
+    std::cout<<"Calcul castig b3: "<<b3.CalculCastigTotal()<<" "<<" RON "<<std::endl;
+
+
 
     std::cout<<"Detalii bilet: "<<std::endl;
     std::cout<<b1<<std::endl;
-    std::cout<<p1<<" | Castig standard: "<<p1.calculCastig()<<" lei"<<std::endl;
-    std::cout<<p1<<" | Castig bonus: "<<p1.calculCastig(15.0)<<" lei"<<std::endl;
+    std::cout<<p1<<" | Castig standard: "<<p1.calculCastig()<<" RON"<<std::endl;
+    std::cout<<p1<<" | Castig bonus: "<<p1.calculCastig(15.0)<<" RON"<<std::endl;
 
     bilet[0].ActualizeazaCote(1.1);
     std::cout<<"Cota actualizata: "<<bilet[0]<<std::endl;
